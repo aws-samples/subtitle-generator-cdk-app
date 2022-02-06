@@ -15,16 +15,22 @@ With this project, you can provision the infrastructure, backend, and frontend r
 4. [Install AWS Cloud Development Kit (CDK) v2](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_install)
 
 ## Quick Start
-1. `$ git clone https://github.com/aws-samples/subtitle-generator-cdk-app`
-2. `$ cd subtitle-generator-cdk-app`
-3. `$ npm install`
-4. `$ cdk bootstrap && cdk deploy -all --outputs-file ./cdk-outputs.json` Please check for each stack provisioned through the terminal and type `y` to the question.
-5. After the entire stack is deployed, check the `cdk-outputs.json` file and access the `StaticWebDistributionUrl` in `StaticWebStack` through your browser.
-6. And copy the entire contents of `cdk-outputs.json` to the clipboard. 
+1. ```shell
+   $ git clone https://github.com/aws-samples/subtitle-generator-cdk-app
+   $ cd subtitle-generator-cdk-app
+   $ npm install
+   $ npm run build
+   $ cdk bootstrap
+   $ cdk deploy --all --outputs-file ./cdk-outputs.json
+   ```
+   <b>Please check for each stack provisioned through the terminal and type `y` to the question.</b>
+2. After the entire stack is deployed, check the `cdk-outputs.json` file and access the `StaticWebDistributionUrl` in `StaticWebStack` through your browser.<br>
+   (Ex: `"StaticWebDistributionUrl": "xxxxxxxxx.cloudfront.net"`)
+3. And copy the entire contents of `cdk-outputs.json` to the clipboard. 
    ![cdk-outputs](./assets/1.png)
-7. Paste the copied `cdk-outputs.json` into your browser and click the `Submit` button.
+4. Paste the copied `cdk-outputs.json` into your browser and click the `Submit` button.
    ![Environment Setting](./assets/2.png)
-8. It's done! Now, sign up with a valid email account and try creating multilingual subtitle files for your videos.
+5. It's done! Now, sign up with a valid email account and try creating multilingual subtitle files for your videos.
 
 ## Useful commands
 
