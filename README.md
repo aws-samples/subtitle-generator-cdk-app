@@ -1,11 +1,11 @@
-# CDK - Subtitle Generator
+# Subtitle Generator - AWS CDK APP
 
-With this project, you can provision the infrastructure, backend, and frontend required for a subtitle generator with a single command via CDK.
+With this project, you can provision the infrastructure, backend, and frontend required for a subtitle generator with a [AWS CDK](https://aws.amazon.com/cdk).
 
 ## Demo
 ![demo](./assets/sample.gif)
 
-## Architecture
+## Serverless Architecture
 ![Architecture](./assets/architecture.png)
 
 ## Prerequisites
@@ -23,14 +23,26 @@ With this project, you can provision the infrastructure, backend, and frontend r
    $ cdk bootstrap
    $ cdk deploy --all --outputs-file ./cdk-outputs.json
    ```
-   <b>Please check for each stack provisioned through the terminal and type `y` to the question.</b>
+   <b>Please check for each stack provisioned through the terminal and type `y` to the question.</b><br>
+   Through this task, provision the architecture shown in the figure above. It takes approximately 15-30 minutes.
 2. After the entire stack is deployed, check the `cdk-outputs.json` file and access the `StaticWebDistributionUrl` in `StaticWebStack` through your browser.<br>
    (Ex: `"StaticWebDistributionUrl": "xxxxxxxxx.cloudfront.net"`)
 3. And copy the entire contents of `cdk-outputs.json` to the clipboard. 
    ![cdk-outputs](./assets/1.png)
 4. Paste the copied `cdk-outputs.json` into your browser and click the `Submit` button.
    ![Environment Setting](./assets/2.png)
-5. It's done! Now, sign up with a valid email account and try creating multilingual subtitle files for your videos.
+5. It's done! Now, sign up with a valid email account and try creating multilingual subtitle files(.srt, .vtt) for your videos.
+
+## AWS Services and Pricing
+* [Amazon Transcribe](https://aws.amazon.com/transcribe/pricing/)
+* [Amazon Translate](https://aws.amazon.com/translate/pricing/)
+* [Amazon S3](https://aws.amazon.com/s3/pricing/)
+* [Amazon CloudFront](https://aws.amazon.com/cloudfront/pricing/)
+* [Amazon Cognito](https://aws.amazon.com/cognito/pricing/)
+* [Amazon API Gateway](https://aws.amazon.com/api-gateway/pricing/)
+* [Amazon DynamoDB](https://aws.amazon.com/dynamodb/pricing/)
+* [AWS Lambda](https://aws.amazon.com/lambda/pricing/)
+* [AWS Step Functions](https://aws.amazon.com/step-functions/pricing/)
 
 ## Useful commands
 
