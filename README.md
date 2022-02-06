@@ -1,4 +1,4 @@
-# Subtitle Generator - AWS CDK APP
+# Subtitle Generator - Cloud Application with [AWS CDK](https://aws.amazon.com/cdk)
 
 With this project, you can provision the infrastructure, backend, and frontend required for a subtitle generator with a [AWS CDK](https://aws.amazon.com/cdk).
 
