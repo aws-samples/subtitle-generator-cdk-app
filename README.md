@@ -44,6 +44,11 @@ With this project, you can provision the infrastructure, backend, and frontend r
 * [AWS Lambda](https://aws.amazon.com/lambda/pricing/)
 * [AWS Step Functions](https://aws.amazon.com/step-functions/pricing/)
 
+## Clean-up
+```shell
+$ cdk destroy --all
+```
+
 ## Useful commands
 
  * `npm run build`   compile typescript to js
