@@ -10,10 +10,18 @@ const CF_URL = process.env.CF_URL;
 
 exports.handler = async (event, context) => {
     const {videoId, targetLanguage} = event;
+    const getVideoParams = {
+        TableName: TABLE_NAME,
+        Key: {
+            [PRIMARY_KEY]: videoId
+        }
+    };
+    const response = await db.get(getVideoParams).promise();
+    const editKey = response.Item['editKey'];
     const getSrt = await new Promise((resolve, reject) => {
         const inputParams = {
             Bucket: BUCKET_NAME,
-            Key: `video-subtitle/${videoId}/${videoId}.srt`
+            Key: editKey ? `video-subtitle/${videoId}/${videoId}_${editKey}.srt`: `video-subtitle/${videoId}/${videoId}.srt`
         };
 
         s3.getObject(inputParams, (err, data) => {
@@ -48,7 +56,6 @@ exports.handler = async (event, context) => {
                     if (err) {
                         reject(err);
                     } else {
-                        //console.log("Translate Processing Success !!");
                         resolve(data);
                     }
                 });
@@ -64,7 +71,7 @@ exports.handler = async (event, context) => {
         const s3Params = {
             Bucket: BUCKET_NAME,
             Body: resultSrt,
-            Key: `video-subtitle/${videoId}/${videoId}_${targetLanguage}.srt`,
+            Key: editKey ? `video-subtitle/${videoId}/${videoId}_${editKey}_${targetLanguage}.srt`: `video-subtitle/${videoId}/${videoId}_${targetLanguage}.srt`,
         };
         s3.putObject(s3Params, (err, data) => {
             if (err) {
@@ -82,7 +89,7 @@ exports.handler = async (event, context) => {
         const s3Params = {
             Bucket: BUCKET_NAME,
             Body: vtt,
-            Key: `video-subtitle/${videoId}/${videoId}_${targetLanguage}.vtt`,
+            Key: editKey ? `video-subtitle/${videoId}/${videoId}_${editKey}_${targetLanguage}.vtt`: `video-subtitle/${videoId}/${videoId}_${targetLanguage}.vtt`,
         };
         s3.putObject(s3Params, (err, data) => {
             if (err) {
@@ -94,8 +101,7 @@ exports.handler = async (event, context) => {
         });
     });
 
-    event.translatedSrtKey = `video-subtitle/${videoId}/${videoId}_${targetLanguage}.srt`;
-
+    event.translatedSrtKey = editKey ? `video-subtitle/${videoId}/${videoId}_${editKey}_${targetLanguage}.srt` : `video-subtitle/${videoId}/${videoId}_${targetLanguage}.srt`;
     /** Update DynamoDB Start **/
     const params = {
         TableName: TABLE_NAME,
@@ -108,8 +114,8 @@ exports.handler = async (event, context) => {
     const dbItemLanguagesIndex = dbItem.languages.findIndex(language => language.language === targetLanguage);
     dbItem.languages[dbItemLanguagesIndex] = {
         language: targetLanguage,
-        srtURL: `${CF_URL}/video-subtitle/${videoId}/${videoId}_${targetLanguage}.srt`,
-        vttURL: `${CF_URL}/video-subtitle/${videoId}/${videoId}_${targetLanguage}.vtt`,
+        srtURL: editKey ? `${CF_URL}/video-subtitle/${videoId}/${videoId}_${editKey}_${targetLanguage}.srt` : `${CF_URL}/video-subtitle/${videoId}/${videoId}_${targetLanguage}.srt`,
+        vttURL: editKey ? `${CF_URL}/video-subtitle/${videoId}/${videoId}_${editKey}_${targetLanguage}.vtt` : `${CF_URL}/video-subtitle/${videoId}/${videoId}_${targetLanguage}.vtt`,
     };
 
     const updateParams = {

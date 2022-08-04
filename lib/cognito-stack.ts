@@ -95,6 +95,7 @@ export class CognitoStack extends cdk.Stack {
         });
 
         props.assetsBucket.grantReadWrite(isUserCognitoGroupRole);
+        props.assetsBucket.grantDelete(isUserCognitoGroupRole);
 
         new cognito.CfnIdentityPoolRoleAttachment(
             this,

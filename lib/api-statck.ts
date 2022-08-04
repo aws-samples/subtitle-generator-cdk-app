@@ -38,6 +38,7 @@ export class ApiStack extends cdk.Stack {
                 BUCKET_NAME: props.assetsBucket.bucketName,
                 PRIMARY_KEY: 'videoId',
                 TABLE_NAME: props.dynamoVideoTable.tableName,
+                DISTRIBUTION_ID: props.assetsDistribution.distributionId,
             },
         }
 
@@ -78,6 +79,13 @@ export class ApiStack extends cdk.Stack {
             handler: "index.handler",
         });
 
+        updateOneLambda.role?.addToPrincipalPolicy(
+            new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: ["cloudfront:CreateInvalidation"],
+                resources: [`arn:aws:cloudfront::${cdk.Stack.of(this).account}:distribution/${props.assetsDistribution.distributionId}`]
+            })
+        )
         // Grant the Lambda access to the S3 Bucket
         props.assetsBucket.grantRead(deleteOneLambda);
         props.assetsBucket.grantDelete(deleteOneLambda);
@@ -91,7 +99,11 @@ export class ApiStack extends cdk.Stack {
         props.dynamoVideoTable.grantReadWriteData(deleteOneLambda);
 
         // Integrate the Lambda functions with the API Gateway resource
-        const getAllIntegration = new apiGateway.LambdaIntegration(getAllLambda);
+        const getAllIntegration = new apiGateway.LambdaIntegration(getAllLambda, /* {
+            requestParameters: {
+                "integration.request.querystring.user": "method.request.querystring.user",
+            }
+        }*/);
         const createOneIntegration = new apiGateway.LambdaIntegration(createOneLambda);
         const getOneIntegration = new apiGateway.LambdaIntegration(getOneLambda);
         const updateOneIntegration = new apiGateway.LambdaIntegration(updateOneLambda);
@@ -177,7 +189,17 @@ export class ApiStack extends cdk.Stack {
         }
 
         const videosResource = api.root.addResource('videos');
-        videosResource.addMethod('GET', getAllIntegration, methodAuthorizerOptions);
+        videosResource.addMethod('GET', getAllIntegration, {
+            ...methodAuthorizerOptions,
+            requestParameters: {
+                "method.request.querystring.user": true,
+            },
+            requestValidatorOptions: {
+                requestValidatorName: "querystring-validator",
+                validateRequestParameters: true,
+                validateRequestBody: false,
+            }
+        });
         videosResource.addMethod('POST', createOneIntegration, methodAuthorizerOptions);
         addCorsOptions(videosResource);
 
@@ -202,7 +224,6 @@ export class ApiStack extends cdk.Stack {
             ]
         });
         addCorsOptions(subtitleResource);
-
 
         const singleVideoResource = videosResource.addResource('{id}');
         singleVideoResource.addMethod('GET', getOneIntegration, methodAuthorizerOptions);

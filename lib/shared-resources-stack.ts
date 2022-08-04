@@ -32,6 +32,10 @@ export class SharedStack extends cdk.Stack {
         const originAccessIdentity = new cloudfront.OriginAccessIdentity(this, 'AssetsOriginAccessIdentity');
         this.assetsBucket.grantRead(originAccessIdentity);
 
+        const assetsDistributionCachePolicy: cloudfront.CachePolicyProps = {
+            defaultTtl: cdk.Duration.millis(0),
+
+        }
         this.assetsDistribution = new cloudfront.Distribution(this, 'AssetsDistribution', {
             defaultBehavior: {
                 origin: new cloudfrontOrigins.S3Origin(this.assetsBucket, {originAccessIdentity}),

@@ -2,12 +2,14 @@ const AWS = require('aws-sdk');
 
 const TABLE_NAME = process.env.TABLE_NAME || '';
 const PRIMARY_KEY = process.env.PRIMARY_KEY || '';
+const DISTRIBUTION_ID = process.env.DISTRIBUTION_ID || '';
 
 const RESERVED_RESPONSE = `Error: You're using AWS reserved keywords as attributes`,
     DYNAMODB_EXECUTION_ERROR = `Error: Execution update, caused a Dynamodb error, please take a look at your CloudWatch Logs.`;
 
 
 const db = new AWS.DynamoDB.DocumentClient();
+const cloudFront = new AWS.CloudFront();
 
 const headers = {
     // "Access-Control-Allow-Origin": CF_URL,
@@ -27,6 +29,24 @@ exports.handler = async (event, context) => {
     }
 
     const editedItem = JSON.parse(event.body);
+
+    if (editedItem['isSubtitleEdit']) {
+        delete editedItem.isSubtitleEdit;
+        cloudFront.createInvalidation({
+            DistributionId: DISTRIBUTION_ID, /* required */
+            InvalidationBatch: { /* required */
+                CallerReference: (new Date()).toString(), /* required */
+                Paths: { /* required */
+                    Quantity: 1, /* required */
+                    Items: [
+                        '/video-subtitle/' + editedItemId + '/*',
+                    ]
+                }
+            }
+        });
+    }
+
+
     const editedItemProperties = Object.keys(editedItem);
     if (!editedItem || editedItemProperties.length < 1) {
         return { statusCode: 400, body: 'invalid request, no arguments provided' };

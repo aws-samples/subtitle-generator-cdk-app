@@ -1,7 +1,6 @@
 const AWS = require('aws-sdk');
 
 const TABLE_NAME = process.env.TABLE_NAME || '';
-
 const db = new AWS.DynamoDB.DocumentClient();
 
 const headers = {
@@ -9,9 +8,14 @@ const headers = {
 };
 
 exports.handler = async (event, context) => {
+    const userName = event.queryStringParameters.user;
     const params = {
-        TableName: TABLE_NAME
+        TableName: TABLE_NAME,
+        FilterExpression: '#l = :l',
+        ExpressionAttributeNames: { '#l': 'userName' },
+        ExpressionAttributeValues: { ':l': userName }
     };
+
 
     try {
         const response = await db.scan(params).promise();

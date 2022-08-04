@@ -36,19 +36,19 @@ export class StaticWebStack extends cdk.Stack {
             },
             errorResponses: [
                 {
-                    ttl: cdk.Duration.seconds(10),
                     responsePagePath: '/index.html',
                     httpStatus: 403,
                     responseHttpStatus: 403,
                 },
                 {
-                    ttl: cdk.Duration.seconds(10),
                     responsePagePath: '/index.html',
                     httpStatus: 404,
                     responseHttpStatus: 404,
                 },
             ],
         });
+
+
 
         this.staticWebBucket.addCorsRule({
             allowedMethods: [
