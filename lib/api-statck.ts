@@ -34,6 +34,7 @@ export class ApiStack extends cdk.Stack {
         const crudLambdaDefaultProps = {
             runtime: lambda.Runtime.NODEJS_12_X,
             code: lambda.Code.fromAsset('resources/lambdas/DynamoCRUD'),
+            timeout: cdk.Duration.minutes(1),
             environment: {
                 BUCKET_NAME: props.assetsBucket.bucketName,
                 PRIMARY_KEY: 'videoId',
@@ -73,17 +74,18 @@ export class ApiStack extends cdk.Stack {
         const setStaticWebEnv = new lambda.Function(this, 'SetStaticWebEnv', {
             runtime: lambda.Runtime.NODEJS_12_X,
             code: lambda.Code.fromAsset('resources/lambdas/SetStaticWebEnv'),
+            timeout: cdk.Duration.minutes(3),
             environment: {
-                BUCKET_NAME: props.staticWebBucket.bucketName
+                BUCKET_NAME: props.staticWebBucket.bucketName,
+                DISTRIBUTION_ID: props.assetsDistribution.distributionId,
             },
             handler: "index.handler",
         });
-
-        updateOneLambda.role?.addToPrincipalPolicy(
+        setStaticWebEnv.role?.addToPrincipalPolicy(
             new iam.PolicyStatement({
                 effect: iam.Effect.ALLOW,
                 actions: ["cloudfront:CreateInvalidation"],
-                resources: [`arn:aws:cloudfront::${cdk.Stack.of(this).account}:distribution/${props.assetsDistribution.distributionId}`]
+                resources: [`*`]
             })
         )
         // Grant the Lambda access to the S3 Bucket
@@ -99,11 +101,7 @@ export class ApiStack extends cdk.Stack {
         props.dynamoVideoTable.grantReadWriteData(deleteOneLambda);
 
         // Integrate the Lambda functions with the API Gateway resource
-        const getAllIntegration = new apiGateway.LambdaIntegration(getAllLambda, /* {
-            requestParameters: {
-                "integration.request.querystring.user": "method.request.querystring.user",
-            }
-        }*/);
+        const getAllIntegration = new apiGateway.LambdaIntegration(getAllLambda);
         const createOneIntegration = new apiGateway.LambdaIntegration(createOneLambda);
         const getOneIntegration = new apiGateway.LambdaIntegration(getOneLambda);
         const updateOneIntegration = new apiGateway.LambdaIntegration(updateOneLambda);

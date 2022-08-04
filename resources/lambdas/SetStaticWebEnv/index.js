@@ -1,7 +1,9 @@
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3();
-
+const cloudfront = new AWS.CloudFront();
 const BUCKET_NAME = process.env.BUCKET_NAME;
+const DISTRIBUTION_ID = process.env.DISTRIBUTION_ID;
+
 
 const headers = {
     // "Access-Control-Allow-Origin": CF_URL,
@@ -37,6 +39,30 @@ exports.handler = async (event, context) => {
                 console.log(err, err.stack);
                 reject(err);
             } else {
+                resolve(data);
+            }
+        });
+    });
+
+    await new Promise((resolve, reject) => {
+        const params = {
+            DistributionId: DISTRIBUTION_ID,
+            InvalidationBatch: {
+                CallerReference: (new Date()).toString(),
+                Paths: {
+                    Quantity: '1',
+                    Items: [
+                        '/env.js',
+                    ]
+                }
+            }
+        };
+        cloudfront.createInvalidation(params, (err, data) => {
+            if (err) {
+                console.log(err, err.stack); // an error occurred
+                reject(err);
+            } else {
+                console.log(data);           // successful response
                 resolve(data);
             }
         });
