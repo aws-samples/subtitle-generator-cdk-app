@@ -16,6 +16,7 @@ export interface ApiStackProps extends cdk.StackProps {
     readonly createSubtitleStateMachine: stepFunctions.StateMachine;
     readonly dynamoVideoTable: dynamodb.Table;
     readonly assetsDistribution: cloudfront.Distribution;
+    readonly staticWebDistribution: cloudfront.Distribution;
     readonly userPool: cognito.UserPool;
 }
 
@@ -77,7 +78,7 @@ export class ApiStack extends cdk.Stack {
             timeout: cdk.Duration.minutes(3),
             environment: {
                 BUCKET_NAME: props.staticWebBucket.bucketName,
-                DISTRIBUTION_ID: props.assetsDistribution.distributionId,
+                DISTRIBUTION_ID: props.staticWebDistribution.distributionId,
             },
             handler: "index.handler",
         });

@@ -36,6 +36,7 @@ new ApiStack(app, 'ApiStack', {
     createSubtitleStateMachine,
     assetsDistribution,
     staticWebBucket,
+    staticWebDistribution,
     userPool,
 });
 
