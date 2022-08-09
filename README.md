@@ -4,6 +4,8 @@ With this project, you can provision the infrastructure, backend, and frontend r
 
 ## Demo
 ![demo](./assets/sample.gif)
+![videos](./assets/videos.png)
+![editor](./assets/editor.png)
 
 ## Serverless Architecture
 ![Architecture](./assets/architecture.png)
@@ -31,7 +33,7 @@ With this project, you can provision the infrastructure, backend, and frontend r
    ![cdk-outputs](./assets/1.png)
 4. Paste the copied `cdk-outputs.json` into your browser and click the `Submit` button.
    ![Environment Setting](./assets/2.png)
-5. It's done! Now, sign up with a valid email account and try creating multilingual subtitle files(.srt, .vtt) for your videos.
+5. It's done! Now, sign up with a valid email account and try creating and editing multilingual subtitle files(.srt, .vtt) for your videos.
 
 ## AWS Services and Pricing
 * [Amazon Transcribe](https://aws.amazon.com/transcribe/pricing/)
