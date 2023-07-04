@@ -23,7 +23,7 @@ With this project, you can provision the infrastructure, backend, and frontend r
    $ npm install
    $ npm run build
    $ cdk bootstrap
-   $ cdk deploy --all --outputs-file ./cdk-outputs.json
+   $ cdk deploy --all --outputs-file ./cdk-outputs.json --require-approval never
    ```
    <b>Please check for each stack provisioned through the terminal and type `y` to the question.</b><br>
    Through this task, provision the architecture shown in the figure above. It takes approximately 15-30 minutes.
