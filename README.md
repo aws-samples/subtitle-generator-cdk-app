@@ -54,3 +54,9 @@ With this project, you can provision the infrastructure, backend, and frontend r
  * `cdk deploy`      deploy this stack to your default AWS account/region
  * `cdk diff`        compare deployed stack with current state
  * `cdk synth`       emits the synthesized CloudFormation template
+
+## Clean-up
+```shell
+cdk destroy
+```
+If you don't need the subtitle generator anymore and want to remove all of its stack and resources, do this command.
